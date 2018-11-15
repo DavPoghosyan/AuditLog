@@ -1,38 +1,43 @@
-package com.test.audit.logs;
+package com.audit.logs;
 
+import com.audit.logs.domain.AuditLog;
+import com.audit.logs.service.AuditLogService;
+import com.audit.logs.utils.ApplicationProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.test.audit.logs.domain.AuditLog;
-import com.test.audit.logs.services.AuditLogService;
-import com.test.audit.logs.utils.LogsModel;
+import com.audit.logs.utils.LogsModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
-@EnableJpaRepositories("com.test.audit.logs.repository")
 public class DemoApplication {
+
+    private static final Logger logger = LoggerFactory.getLogger(DemoApplication.class);
+
+
+    @Autowired
+    AuditLogService auditLogService;
+
+    @Autowired
+    ApplicationProperties applicationProperties;
 
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
     }
-
-    @Autowired
-    AuditLogService auditLogService;
 
     @Bean
     CommandLineRunner runner() {
@@ -45,13 +50,11 @@ public class DemoApplication {
                 List<LogsModel> logs = mapper.readValue(inputStream,typeReference);
                 Map<String, List<LogsModel>> logsMap = logs.stream()
                         .collect(Collectors.groupingBy(LogsModel::getId));
-
                 logsMap.forEach(getConsumer());
-                System.out.println(auditLogService.list());
-                System.out.println(logs);
-                System.out.println("Logs Saved!");
+                logger.info(String.format("%s Rows of Logs have been saved!", logsMap.keySet().size()));
+                logger.debug(String.format("%s Alerts have been detected in Logs", auditLogService.getAlertsCount()));
             } catch (IOException e){
-                System.out.println("Unable to save logs: " + e.getMessage());
+                logger.error("Unable to save logs: " + e.getMessage());
             }
         };
     }
@@ -68,7 +71,7 @@ public class DemoApplication {
             }
             long eventDuration = Math.abs(logs.get(0).getTimestamp() - optionalLong.orElse(Instant.now().getEpochSecond()));
             auditLog.setEventDuration(eventDuration);
-            if(eventDuration > 4) { // make configurable
+            if(eventDuration > applicationProperties.getAlertThresholdMs()) {
                 auditLog.setAlert(true);
             }
             auditLogService.save(auditLog);

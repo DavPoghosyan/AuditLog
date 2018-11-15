@@ -1,4 +1,4 @@
-package com.test.audit.logs;
+package com.audit.logs;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

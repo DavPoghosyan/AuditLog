@@ -1,4 +1,4 @@
-package com.test.audit.logs.domain;
+package com.audit.logs.domain;
 
 import lombok.*;
 import lombok.experimental.FieldNameConstants;

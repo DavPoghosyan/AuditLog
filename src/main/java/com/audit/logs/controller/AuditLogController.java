@@ -1,7 +1,7 @@
-package com.test.audit.logs.controllers;
+package com.audit.logs.controller;
 
-import com.test.audit.logs.domain.AuditLog;
-import com.test.audit.logs.services.AuditLogService;
+import com.audit.logs.domain.AuditLog;
+import com.audit.logs.service.AuditLogService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

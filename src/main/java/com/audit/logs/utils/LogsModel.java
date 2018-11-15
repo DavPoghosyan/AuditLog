@@ -1,4 +1,4 @@
-package com.test.audit.logs.utils;
+package com.audit.logs.utils;
 
 import com.fasterxml.jackson.databind.JsonSerializer;
 import lombok.AllArgsConstructor;
