@@ -23,6 +23,15 @@ repositories {
 	mavenCentral()
 }
 
+jar {
+	manifest {
+		attributes(
+				'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+				'Main-Class': 'com.audit.logs.DemoApplication'
+		)
+	}
+}
+
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'

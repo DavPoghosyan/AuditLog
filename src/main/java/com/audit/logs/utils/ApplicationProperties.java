@@ -12,7 +12,14 @@ public class ApplicationProperties {
     @Value( "${audit.logs.alert.threshold.ms}" )
     private long alertThresholdMs;
 
+    @Value( "${audit.logs.file}" )
+    private String logFile;
+
     public long getAlertThresholdMs() {
         return alertThresholdMs;
+    }
+
+    public String getLogFile() {
+        return logFile;
     }
 }

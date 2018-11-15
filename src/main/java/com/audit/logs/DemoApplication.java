@@ -45,7 +45,7 @@ public class DemoApplication {
             // read json and write to db
             ObjectMapper mapper = new ObjectMapper();
             TypeReference<List<LogsModel>> typeReference = new TypeReference<List<LogsModel>>(){};
-            InputStream inputStream = TypeReference.class.getResourceAsStream("/json/logs.json");
+            InputStream inputStream = TypeReference.class.getResourceAsStream(applicationProperties.getLogFile());
             try {
                 List<LogsModel> logs = mapper.readValue(inputStream,typeReference);
                 Map<String, List<LogsModel>> logsMap = logs.stream()
